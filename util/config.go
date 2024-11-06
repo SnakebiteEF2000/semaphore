@@ -208,6 +208,10 @@ type ConfigType struct {
 	EnvVars map[string]string `json:"env_vars,omitempty" env:"SEMAPHORE_ENV_VARS"`
 
 	ForwardedEnvVars []string `json:"forwarded_env_vars,omitempty" env:"SEMAPHORE_FORWARDED_ENV_VARS"`
+
+	Metrics struct {
+		Enabled bool `json:"enabled"`
+	} `json:"prometheus_metrics"`
 }
 
 func NewConfigType() *ConfigType {

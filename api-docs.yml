@@ -1039,6 +1039,30 @@ paths:
           schema:
             $ref: "#/definitions/InfoType"
 
+  /metrics:
+    get:
+      summary: Prometheus metrics endpoint
+      description: Returns prometheus-formatted metrics about Semaphore operations
+      produces:
+        - text/plain
+      security: []   # No security by default, though may want to add it
+      responses:
+        200:
+          description: Prometheus metrics
+          schema:
+            type: string
+            example: |
+              # HELP semaphore_tasks_total Total number of tasks created
+              # TYPE semaphore_tasks_total counter
+              semaphore_tasks_total 123
+              # HELP semaphore_tasks_running Number of currently running tasks
+              # TYPE semaphore_tasks_running gauge
+              semaphore_tasks_running 5
+          headers:
+            content-type:
+              type: string
+              x-example: text/plain; version=0.0.4
+
   # Authentication
   /auth/login:
     get:
