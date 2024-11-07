@@ -10,6 +10,7 @@ import (
 
 	"github.com/semaphoreui/semaphore/db"
 	"github.com/semaphoreui/semaphore/db_lib"
+	"github.com/semaphoreui/semaphore/monitor"
 	"github.com/semaphoreui/semaphore/pkg/task_logger"
 
 	"github.com/semaphoreui/semaphore/util"
@@ -113,6 +114,9 @@ func (p *TaskPool) Run() {
 				}
 				projTasks[t.Task.ID] = t
 				p.RunningTasks[t.Task.ID] = t
+
+				//test only
+				monitor.TasksRunning.Set(float64(len(p.RunningTasks)))
 				continue
 			}
 
@@ -124,6 +128,9 @@ func (p *TaskPool) Run() {
 			}
 
 			delete(p.RunningTasks, t.Task.ID)
+
+			// test only
+			monitor.TasksRunning.Set(float64(len(p.RunningTasks)))
 		}
 	}(p.resourceLocker)
 
@@ -356,6 +363,9 @@ func (p *TaskPool) AddTask(taskObj db.Task, userID *int, projectID int) (newTask
 	if err != nil {
 		return
 	}
+
+	// test
+	monitor.TasksTotal.Inc()
 
 	taskRunner := TaskRunner{
 		Task: newTask,

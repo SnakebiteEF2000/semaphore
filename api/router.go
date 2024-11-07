@@ -11,14 +11,16 @@ import (
 	"time"
 
 	"github.com/semaphoreui/semaphore/api/runners"
+	"github.com/semaphoreui/semaphore/monitor"
 
+	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/semaphoreui/semaphore/api/helpers"
 	"github.com/semaphoreui/semaphore/api/projects"
 	"github.com/semaphoreui/semaphore/api/sockets"
 	"github.com/semaphoreui/semaphore/api/tasks"
 	"github.com/semaphoreui/semaphore/db"
 	"github.com/semaphoreui/semaphore/util"
-	"github.com/gorilla/mux"
 )
 
 var startTime = time.Now().UTC()
@@ -86,6 +88,7 @@ func Route() *mux.Router {
 	publicAPIRouter.HandleFunc("/auth/oidc/{provider}/login", oidcLogin).Methods("GET")
 	publicAPIRouter.HandleFunc("/auth/oidc/{provider}/redirect", oidcRedirect).Methods("GET")
 	publicAPIRouter.HandleFunc("/auth/oidc/{provider}/redirect/{redirect_path:.*}", oidcRedirect).Methods("GET")
+	publicAPIRouter.Handle("/metrics", monitor.PrometheusMiddleware(promhttp.Handler()))
 
 	internalAPI := publicAPIRouter.PathPrefix("/internal").Subrouter()
 	internalAPI.HandleFunc("/runners", runners.RegisterRunner).Methods("POST")
